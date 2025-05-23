@@ -1,0 +1,24 @@
+[project]
+name = "vacanciesdbms"
+version = "0.1"
+description = "Консольное приложение для работы с API от HH, которое записывает указанные вакансии в БД"
+authors = [
+    {name = "Your Name",email = "you@example.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "flake8 (>=7.2.0,<8.0.0)",
+    "black (>=25.1.0,<26.0.0)",
+    "requests (>=2.32.3,<3.0.0)",
+    "psycopg2 (>=2.9.10,<3.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 119
+exclude = ".git"
