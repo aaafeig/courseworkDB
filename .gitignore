@@ -1,2 +1,6 @@
 /.venv/
-/database.ini/
+/src/database.ini
+/logs/
+/data/
+/src/__pycache__/
+/poetry.lock

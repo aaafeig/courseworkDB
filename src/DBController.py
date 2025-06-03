@@ -22,8 +22,11 @@ class Controller:
         self._path_file = path_file
         self._emps = []
         self._vacancies = Utils.reader_file(self.path_file)
-        self._conn = psycopg2.connect(**Config.config())
-        self._cur = self._conn.cursor()
+        try:
+            self._conn = psycopg2.connect(**Config.config())
+            self._cur = self._conn.cursor()
+        except Exception as e:
+            print(f"Ошибка при подключении к базе данных: {e}")
 
 
     @abstractmethod
@@ -54,44 +57,47 @@ class Controller:
     def emps(self):
         return self._emps
 
+    @emps.setter
+    def emps(self, new_emps: list[dict]):
+        self._emps = new_emps
+
 class DBControllerEmployers(Controller):
-
-    def _uniq(self):
-        for i in Utils.reader_file(self.path_file):
-            if i.get('employer') not in self.emps:
-                self.emps.append(i.get('employer'))
-            else:
-                continue
-
-        loger.debug(self.emps)
 
 
     def _create_table(self):
-        with self.conn:
-            self.cur.execute("""
+        try:
+            with self.conn:
+                self.cur.execute("""
                         CREATE TABLE IF NOT EXISTS employers (
                             emp_id SERIAL,
                             name_employer VARCHAR(100) NOT NULL
                         )
                     """)
+        except Exception as e:
+            print(f"Ошибка при создании таблицы: {e}")
+
 
     def save(self):
-        self._uniq()
+        self.emps = Utils._uniq(self.path_file)
         self._create_table()
-        with self.conn:
-            for emp in self.emps:
-                self.cur.execute("INSERT INTO employers (name_employer) VALUES (%s)",
+        try:
+            with self.conn:
+                for emp in self.emps:
+                    self.cur.execute("INSERT INTO employers (name_employer) VALUES (%s)",
                  (emp,))
-            self.conn.commit()
-        print("Работодатели сохранены")
+                self.conn.commit()
+            print("Работодатели сохранены")
+        except Exception as e:
+            print(f"Ошибка при сохранении работодателей: {e}")
 
 
 
 class DBControllerVacancies(Controller):
 
     def _create_table(self):
-        with self.conn:
-            self.cur.execute("""CREATE TABLE IF NOT EXISTS vacancies (
+        try:
+            with self.conn:
+                self.cur.execute("""CREATE TABLE IF NOT EXISTS vacancies (
             vacancy_id VARCHAR(30) PRIMARY KEY,
             name_employer VARCHAR(100),
             title VARCHAR(100) NOT NULL,
@@ -102,16 +108,22 @@ class DBControllerVacancies(Controller):
             url VARCHAR(150)
         )
         """)
+        except Exception as e:
+            print(f"Ошибка при создании таблицы: {e}")
+
 
     def save(self):
         self._create_table()
-        with self.conn:
-            for vacancy in self.vacancies:
-                salary = vacancy.get('salary', {})
-                self.cur.execute("INSERT INTO vacancies (vacancy_id, name_employer, title, description, salary_from, salary_to, currency, url) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+        try:
+            with self.conn:
+                for vacancy in self.vacancies:
+                    salary = vacancy.get('salary', {})
+                    self.cur.execute("INSERT INTO vacancies (vacancy_id, name_employer, title, description, salary_from, salary_to, currency, url) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
                                  (vacancy.get('id'), vacancy.get('employer'), vacancy.get('name'), vacancy.get('description'),
                                   salary.get('from'), salary.get('to'),
                                   salary.get('currency'), vacancy.get('url')))
-            self.conn.commit()
-        print("Вакансии сохранены")
+                self.conn.commit()
+            print("Вакансии сохранены")
+        except Exception as e:
+            print(f"Ошибка при сохранении вакансий: {e}")
 

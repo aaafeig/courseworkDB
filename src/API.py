@@ -4,7 +4,12 @@ import json
 from .interfaces import Parser
 class HH(Parser):
 
-    def __init__(self, file_worker):
+    """Класс для парсинга вакансий с сайта HH.ru"""
+
+    def __init__(self, file_worker: str) -> None:
+
+        """Инициализация класса"""
+
         self.url = "https://api.hh.ru/vacancies"
         self.headers = {"User-Agent": "HH-User-Agent"}
         self.params = {"text": "", "page": 0, "per_page": 100, "only_with_salary": True, "locale": "RU", "salary_currency": "RUR"}
@@ -21,6 +26,9 @@ class HH(Parser):
             '4934'  ]
 
     def _get_response(self) -> None:
+
+        
+
         self.vacancies = []
 
         for employer_id in self.employer_ids:
