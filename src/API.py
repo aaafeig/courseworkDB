@@ -27,8 +27,6 @@ class HH(Parser):
 
     def _get_response(self) -> None:
 
-        
-
         self.vacancies = []
 
         for employer_id in self.employer_ids:
