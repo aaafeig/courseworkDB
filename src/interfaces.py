@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import psycopg2
 
+
 class Parser(ABC):
 
     @abstractmethod
@@ -13,52 +14,53 @@ class Parser(ABC):
 
 
 class Controller(ABC):
-    
+
     @abstractmethod
     def __init__(self) -> None:
         pass
-    
+
     @abstractmethod
     def _create_table(self) -> None:
         pass
 
-    @abstractmethod
     @property
+    @abstractmethod
     def vacancies(self) -> list[dict]:
         pass
 
-    @abstractmethod
+    
     @vacancies.setter
-    def vacancies(self, new_vacancies: list[dict]):
-        pass 
-
     @abstractmethod
+    def vacancies(self, new_vacancies: list[dict]):
+        pass
+
     @property
+    @abstractmethod
     def conn(self) -> psycopg2.extensions.connection:
         pass
 
-    @abstractmethod
     @property
+    @abstractmethod
     def cur(self) -> psycopg2.extensions.cursor:
         pass
 
-    @abstractmethod
     @property
+    @abstractmethod
     def path_file(self) -> str:
         pass
 
-    @abstractmethod
     @property
+    @abstractmethod
     def emps(self) -> list[dict]:
         pass
 
-    @abstractmethod
     @emps.setter
+    @abstractmethod
     def emps(self, new_emps: list[dict]) -> None:
         pass
 
+
 class Manager(ABC):
-    
 
     @abstractmethod
     def get_companies_and_vacancies_count(self):
