@@ -4,6 +4,7 @@ from .Config import Config
 from .Utils import Utils
 from logging import FileHandler
 from abc import abstractmethod
+from .interfaces import Controller
 
 loger = logging.getLogger("log_utils")
 file_handler = FileHandler("logs/controller.log", mode="w", encoding="utf-8")
@@ -14,11 +15,11 @@ file_handler.setFormatter(file_formatter)
 loger.addHandler(file_handler)
 loger.setLevel(logging.DEBUG)
 
-class Controller:
+class ControllerImpl(Controller):
 
     """Абстрактный базовый класс, который хранит общие параметры"""
 
-    def __init__(self, path_file='data/file_workers.json'):
+    def __init__(self, path_file='data/file_workers.json') -> None:
         self._path_file = path_file
         self._emps = []
         self._vacancies = Utils.reader_file(self.path_file)
@@ -28,13 +29,8 @@ class Controller:
         except Exception as e:
             print(f"Ошибка при подключении к базе данных: {e}")
 
-
-    @abstractmethod
-    def _create_table(self):
-        pass
-
     @property
-    def vacancies(self):
+    def vacancies(self) -> list[dict]:
         return self._vacancies
 
     @vacancies.setter
@@ -42,29 +38,29 @@ class Controller:
         self._vacancies = new_vacancies
 
     @property
-    def conn(self):
+    def conn(self) -> psycopg2.extensions.connection:
         return self._conn
 
     @property
-    def cur(self):
+    def cur(self) -> psycopg2.extensions.cursor:
         return self._cur
 
     @property
-    def path_file(self):
+    def path_file(self) -> str:
         return self._path_file
 
     @property
-    def emps(self):
+    def emps(self) -> list[dict]:
         return self._emps
 
     @emps.setter
-    def emps(self, new_emps: list[dict]):
+    def emps(self, new_emps: list[dict]) -> None:
         self._emps = new_emps
 
-class DBControllerEmployers(Controller):
+class DBControllerEmployers(ControllerImpl):
 
 
-    def _create_table(self):
+    def _create_table(self) -> None:
         try:
             with self.conn:
                 self.cur.execute("""
@@ -77,7 +73,7 @@ class DBControllerEmployers(Controller):
             print(f"Ошибка при создании таблицы: {e}")
 
 
-    def save(self):
+    def save(self) -> None:
         self.emps = Utils._uniq(self.path_file)
         self._create_table()
         try:
@@ -92,9 +88,9 @@ class DBControllerEmployers(Controller):
 
 
 
-class DBControllerVacancies(Controller):
+class DBControllerVacancies(ControllerImpl):
 
-    def _create_table(self):
+    def _create_table(self) -> None:
         try:
             with self.conn:
                 self.cur.execute("""CREATE TABLE IF NOT EXISTS vacancies (
@@ -112,7 +108,7 @@ class DBControllerVacancies(Controller):
             print(f"Ошибка при создании таблицы: {e}")
 
 
-    def save(self):
+    def save(self) -> None:
         self._create_table()
         try:
             with self.conn:
