@@ -4,14 +4,15 @@ from psycopg2 import Error
 from .Config import Config
 
 class DBManager(Manager):
-    def __init__(self):
+
+    def __init__(self) -> None:
         
         """Инициализация подключения к базе данных"""
         
         self.conn = psycopg2.connect(**Config.config())
         self.cur = self.conn.cursor()
 
-    def get_companies_and_vacancies_count(self):
+    def get_companies_and_vacancies_count(self) -> list[dict]:
         
         """Получить список всех компаний и их количества вакансий"""
 
@@ -34,7 +35,7 @@ class DBManager(Manager):
             print(f"Ошибка при получении компаний и количества вакансий: {e}")
             return []
 
-    def get_all_vacancies(self):
+    def get_all_vacancies(self) -> list[dict]:
 
         """Получить список всех вакансий с названием компании, названием вакансии, зарплатой и URL"""
         try:
@@ -75,7 +76,7 @@ class DBManager(Manager):
             print(f"Ошибка при получении средней зарплаты: {e}")
             return 0
 
-    def get_vacancies_with_higher_salary(self):
+    def get_vacancies_with_higher_salary(self) -> list[dict]:
 
         """Получить вакансии с зарплатой выше средней"""
         
@@ -104,7 +105,7 @@ class DBManager(Manager):
             print(f"Ошибка при получении вакансий с более высокой зарплатой: {e}")
             return []
 
-    def get_vacancies_with_keyword(self, keyword: str):
+    def get_vacancies_with_keyword(self, keyword: str) -> list[dict]:
 
         """Получить вакансии, содержащие ключевое слово в своем названии"""
         
