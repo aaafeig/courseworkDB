@@ -1,5 +1,6 @@
 from configparser import ConfigParser
 
+
 class Config:
     @staticmethod
     def config(filename="src/database.ini", section="postgresql"):
@@ -13,6 +14,5 @@ class Config:
             for param in params:
                 db[param[0]] = param[1]
         else:
-            raise Exception(
-                'Section {0} is not found in the {1} file.'.format(section, filename))
+            raise Exception("Section {0} is not found in the {1} file.".format(section, filename))
         return db

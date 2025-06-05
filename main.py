@@ -2,22 +2,26 @@ from src.API import HH
 from src.DBController import DBControllerEmployers, DBControllerVacancies, ControllerImpl
 from src.DBmanager import DBManager
 
+
 def main() -> None:
+
+    """Главная функция"""
+
     try:
-        parse_vacancies()
+        parse_vacancies() 
         get_vacancies()
     except Exception as e:
         print(f"Ошибка: {e}")
-        raise e 
-    
-    while True:
+        raise e
+
+    while True: # Цикл для выбора действия
         print("1. Получить список компаний и количество вакансий у каждой компании")
         print("2. Получить список всех вакансий с указанием названия компании, названия вакансии и зарплаты")
         print("3. Получить среднюю зарплату по всем вакансиям")
         print("4. Получить список всех вакансий, у которых зарплата выше средней")
         print("5. Получить список всех вакансий, в названии которых содержится переданное в метод слово")
         print("6. Выйти из программы")
-        
+
         choice = input("Выберите действие: ")
 
         if choice == "1":
@@ -34,20 +38,28 @@ def main() -> None:
             break
         else:
             print("Неверный выбор")
-            
 
 
 def saver(saver: ControllerImpl) -> None:
+    """Сохранение данных в базу данных"""
     saver.save()
 
+
 def get_vacancies() -> None:
+
+    """Сохранение данных в базу данных"""
+
     saver_employers = DBControllerEmployers()
     saver_vacancies = DBControllerVacancies()
     savers = [saver_employers, saver_vacancies]
     for saver in savers:
         saver.save()
 
+
 def parse_vacancies() -> None:
+
+    """Парсинг данных из API"""
+
     parser = HH('data/file_workers.json')
     parser.load_vacancies()
 
